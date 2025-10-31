@@ -80,8 +80,8 @@ to view the documentations of swagger
 ------------------------------------------------------------------------------------------------------------------------------------
 
 ##Runing Tests
-
-- Just run this command :
+- define the database connection in php uinit to MYSQL and name for the database but you have to create the database in MYSQL Server then:
+- run this command :
     php artisan test
 - You should see all the tests pass 
 
