@@ -1,59 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧾 Laravel Backend Skill Test — Swagger, Sanctum, FCM, Pipeline
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## ⚙️ Setup & Installation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Follow these steps to get the project running locally 👇
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+# 1️⃣ Clone the repository
+git clone https://github.com/mohammedsayed30/RentUP.git
+cd RentUP
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# 2️⃣ Install PHP dependencies
+composer install
 
-## Learning Laravel
+# 3️⃣ Copy the example environment file
+cp .env.example .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# 4️⃣ Generate the application key
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 5️⃣ Configure your environment
+# Open .env and update these:
+# Database credentials
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+##########################################
+- do not forget to run this  " php artisan queue:work " for background jobs 
+###########################################
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#create  project in Firebase first then add the following in your env
+FCM_SERVICE_ACCOUNT_PATH=storage/app/firebase/service_account.json
+FCM_FIREBASE_PROJECT_ID="your_project_id"   
+FCM_ENDPOINT=https://fcm.googleapis.com/v1/projects/${FCM_FIREBASE_PROJECT_ID}/messages:send
 
-## Contributing
+####################################################################################################################
+- you will find in public fcm-test/index.html & firebase-messaging-sw.js replace my credentials with yours and then
+- visit this " http://127.0.0.1:8000/fcm-test/index.html" in the web and clik get to get the device token 
+######################################################################################################################
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 6️⃣ Run migrations
+php artisan migrate
 
-## Code of Conduct
+# 7️⃣  Seed example data
+php artisan db:seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 8️⃣ Serve the app
+php artisan serve
+#  Visit http://127.0.0.1:8000
+--------------------------------------------------------------------------------------------------------------------------
 
-## Security Vulnerabilities
+##Firebase Cloud Messaging (FCM) Setup
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 1️⃣ Go to Firebase Console → Project Settings → Service Accounts
+# 2️⃣ Click “Generate new private key” to download your service_account.json
+# 3️⃣ Move it to: storage/app/firebase/service_account.json
+# 4️⃣ Make sure .env points to that path:
+        FCM_SERVICE_ACCOUNT_PATH=storage/app/firebase/service_account.json
+# 5️⃣ Generate a device token using a small HTML file (fcm-test/index.html)  //to use to create token and use it for push notifications
+# 6️⃣ Register that token via device create API endpoint 
 
-## License
+-----------------------------------------------------------------------------------------------------------------------------------
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+##Swagger API Docs
+
+Generate and view your Swagger docs easily:
+
+php artisan l5-swagger:generate
+
+Then visit:
+
+http://127.0.0.1:8000/api/documentation
+
+to view the documentations of swagger
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+##Runing Tests
+
+- Just run this command :
+    php artisan test
+- You should see all the tests pass 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+#register
+curl -X POST http://127.0.0.1:8000/api/v1/auth/register \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Sam",
+  "email": "sam@example.com",
+  "password": "secret123",
+}'
+#login
+curl -X POST http://127.0.0.1:8000/api/v1/auth/login \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "sam@example.com",
+  "password": "secret123",
+}'
+
+#current user
+curl -X GET http://127.0.0.1:8000/api/v1/auth/me \
+-H "Authorization: Bearer {TOKEN}"
+
+#logout
+curl -X POST http://127.0.0.1:8000/api/v1/auth/logout \
+-H "Authorization: Bearer {TOKEN}"
+
+#create order
+
+curl -X POST http://127.0.0.1:8000/api/v1/orders \
+-H "Authorization: Bearer {TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{
+  "code": "ORD-1001", // you do not have to add this it wil be handled by the code
+  "amount_decimal": "199.99",
+}'
+
+##get orders
+
+curl -X GET http://127.0.0.1:8000/api/v1/orders \
+-H "Authorization: Bearer {TOKEN}"
+
+##get orders by filters
+
+curl -X GET http://127.0.0.1:8000/api/v1/orders?min=20&max=100 \
+-H "Authorization: Bearer {TOKEN}"
+
+##get order by id
+
+curl -X GET http://127.0.0.1:8000/api/v1/orders/1 \
+-H "Authorization: Bearer {TOKEN}"
+
+##update the status of orders
+
+curl -X PATCH http://127.0.0.1:8000/api/v1/orders/1 \
+-H "Authorization: Bearer {TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{
+  "status": "shipped"
+}'
+
+#Register Device Token
+curl -X POST http://127.0.0.1:8000/api/v1/devices \
+-H "Authorization: Bearer {TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{
+  "token": "your_fcm_token_here",   //that taken from firebase
+  "platform": "android"
+}'
+
+
+❌ Delete Device Token
+curl -X DELETE http://127.0.0.1:8000/api/v1/devices/1 \
+-H "Authorization: Bearer {TOKEN}"
+
+🚀 Send Notification for Order manually
+curl -X POST http://127.0.0.1:8000/api/v1/orders/1/notify \
+-H "Authorization: Bearer {TOKEN}"
+
+##if your configurations correct you should a notification appeared with the order info and when you upate the status too
+
+
+
+
+
+
+
+
+
+
+
