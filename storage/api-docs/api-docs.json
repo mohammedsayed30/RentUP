@@ -1,0 +1,647 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "RentUp API Documentation",
+        "description": "OpenAPI 3.x documentation for the RentUp application.",
+        "contact": {
+            "email": "support@rentup.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://project.test/api/v1",
+            "description": "Primary API Server"
+        }
+    ],
+    "paths": {
+        "/v1/devices": {
+            "post": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Register a new device token",
+                "description": "Stores a new Firebase/FCM device token for the authenticated user. Ability scope required: `devices:write`.",
+                "operationId": "cf252444b25baacce38b78e8c061c51d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "fcm_token_12345ABCDEFG"
+                                    },
+                                    "platform": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ios",
+                                            "android"
+                                        ],
+                                        "example": "android"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Device token stored successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Device token registered."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing ability: devices:write)"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/devices/{device}": {
+            "delete": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Remove a device token",
+                "description": "Deletes a specific device token for the authenticated user. Ability scope required: `devices:write`.",
+                "operationId": "57b7453e23a7ceab499725a50b0fbb02",
+                "parameters": [
+                    {
+                        "name": "device",
+                        "in": "path",
+                        "description": "ID of the device token record to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Device token deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing ability: devices:write)"
+                    },
+                    "404": {
+                        "description": "Device token not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "List all orders",
+                "description": "Fetches a paginated list of orders. Ability scope required: `orders:read`.",
+                "operationId": "868a3eb6a92f63db88ce23b8a18a1198",
+                "responses": {
+                    "200": {
+                        "description": "List of orders retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing ability: orders:read)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/orders/{order}/notify": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Manually trigger notification",
+                "description": "Dispatches a job to send status change notifications. Ability scope required: `notify:send`.",
+                "operationId": "3c816c0067d805dd1286e9121b0fc046",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID of the order to notify",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Notification job successfully enqueued",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification job enqueued."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing ability: notify:send)"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get a single order",
+                "description": "Retrieves a specific order by ID. Requires 'orders:read' ability.",
+                "operationId": "3fbf205ca31011e67fc11434d632ba98",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing 'orders:read' ability)"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                            "orders:read"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/v1/orders/{order}/status": {
+            "patch": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update order status",
+                "description": "Updates the status of an existing order. Requires 'orders:write' ability.",
+                "operationId": "a02420b00f9a7a1d6f335d99b6ce9d06",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "processing",
+                                            "completed",
+                                            "cancelled"
+                                        ],
+                                        "example": "completed"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden (Missing 'orders:write' ability)"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                            "orders:write"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "description": "Creates a new user account and issues a Sanctum API token.",
+                "operationId": "61d007a27b35b46d41dcd5185d4877d2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jane@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "Sanctum API token",
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login and get API token",
+                "description": "Authenticates the user and returns an API token.",
+                "operationId": "cf0d06262ef8cfee338386ddd24bbcf6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password",
+                                    "device_name"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jane@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "device_name": {
+                                        "type": "string",
+                                        "example": "iPhone 15 Pro"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "Sanctum API token",
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout user",
+                "description": "Revokes the current access token, logging the user out of the current device.",
+                "operationId": "58afdedddc15a7eef7a3a54df327dabe",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully logged out."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get current authenticated user",
+                "description": "Returns the details of the currently authenticated user based on the provided token.",
+                "operationId": "cdd53dd8f60fe29c214c12cd96d0252b",
+                "responses": {
+                    "200": {
+                        "description": "Current user details retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Order": {
+                "title": "Order Model",
+                "description": "Order data model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 101
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 5
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "ORD-98765"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "processing",
+                            "shipped",
+                            "delivered"
+                        ],
+                        "example": "pending"
+                    },
+                    "amount_decimal": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 49.99
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User Model",
+                "description": "User data model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 5
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Jane Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "jane@example.com"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Global bearerAuth security scheme. Use your Sanctum API token.",
+                "bearerFormat": "Sanctum Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "User registration, login, logout, and profile management."
+        },
+        {
+            "name": "Orders",
+            "description": "CRUD operations and status updates for orders."
+        },
+        {
+            "name": "Devices",
+            "description": "Managing device tokens for push notifications (FCM)."
+        },
+        {
+            "name": "Notifications",
+            "description": "Manually trigger notifications for orders."
+        }
+    ]
+}

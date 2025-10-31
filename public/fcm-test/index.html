@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>FCM Token Generator</title>
+  </head>
+  <body>
+    <h2>🔥 FCM Token Generator</h2>
+    <button id="getTokenBtn">Get FCM Token</button>
+    <pre id="tokenOutput"></pre>
+
+    <!-- Modular Firebase SDK -->
+    <script type="module">
+      // Import Firebase SDKs (v10+ modular syntax)
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+      import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging.js";
+
+      // Your config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCPKM9TzEC2meM2cM-V1xeR7dvVBrMvwHM",
+        authDomain: "rentup-fe9c0.firebaseapp.com",
+        projectId: "rentup-fe9c0",
+        storageBucket: "rentup-fe9c0.appspot.com",
+        messagingSenderId: "37191878677",
+        appId: "1:37191878677:web:89a02d169bc18a54cae61c"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
+
+      // Ask for permission + get token
+      document.getElementById('getTokenBtn').addEventListener('click', async () => {
+        try {
+          const permission = await Notification.requestPermission();
+          if (permission !== 'granted') {
+            alert('Notifications permission not granted.');
+            return;
+          }
+
+          const token = await getToken(messaging, {
+            vapidKey: 'BHJMON9eQumHduWQ7EJXl6w3FNIcrBZTxt5OK9F55OoezCCxeiMI3V8utQ2wjfbwqcYTmndGFKhR5zOE0jhKoaM' // 👈 paste your key here
+          });
+
+          document.getElementById('tokenOutput').textContent = token;
+          console.log('✅ Your FCM Token:', token);
+        } catch (err) {
+          console.error('❌ Error getting token', err);
+          alert('Error: check console');
+        }
+      });
+    </script>
+  </body>
+</html>
