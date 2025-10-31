@@ -17,12 +17,12 @@
 
       // Your config
       const firebaseConfig = {
-        apiKey: "AIzaSyCPKM9TzEC2meM2cM-V1xeR7dvVBrMvwHM",
+        apiKey: "Your FireBase API KEy",
         authDomain: "rentup-fe9c0.firebaseapp.com",
-        projectId: "rentup-fe9c0",
+        projectId: "YOUR PROJECT ID",
         storageBucket: "rentup-fe9c0.appspot.com",
-        messagingSenderId: "37191878677",
-        appId: "1:37191878677:web:89a02d169bc18a54cae61c"
+        messagingSenderId: "You sender ID",
+        appId: "Your APP KEY"
       };
 
       // Initialize Firebase
@@ -39,7 +39,7 @@
           }
 
           const token = await getToken(messaging, {
-            vapidKey: 'BHJMON9eQumHduWQ7EJXl6w3FNIcrBZTxt5OK9F55OoezCCxeiMI3V8utQ2wjfbwqcYTmndGFKhR5zOE0jhKoaM' // 👈 paste your key here
+            vapidKey: 'YOUR PAIR KEY' 
           });
 
           document.getElementById('tokenOutput').textContent = token;
